@@ -1,0 +1,10 @@
+<!-- <?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <templates>
+        <t t-name="smart_template_maker.custom_canvas_template">
+            <canvas id="canvas"></canvas>
+        </t>
+    </templates>
+
+</odoo> -->

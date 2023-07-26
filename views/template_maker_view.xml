@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Tree View -->
+        <record id="smart_template_maker_tree_view" model="ir.ui.view">
+            <field name="name">smart_template_maker_tree_view</field>
+            <field name="model">smart.template.maker</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                    <field name="partner_id" />
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- Form View -->
+        <record id="smart_template_maker_form_view" model="ir.ui.view">
+            <field name="name">smart_template_maker_form_view</field>
+            <field name="model">smart.template.maker</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                            <field name="partner_id" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- Action -->
+        <record id="smart_template_maker_action_view" model="ir.actions.act_window">
+            <field name="name">Smart Template Maker</field>
+            <field name="res_model">smart.template.maker</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

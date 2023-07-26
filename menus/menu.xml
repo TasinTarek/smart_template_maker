@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="smart_template_maker_menu"
+        name="Smart Template "
+        sequence="1"/>
+        
+    <menuitem 
+        id="smart_template_maker_sub_menu" 
+        name="Make Smart Template "
+        parent="smart_template_maker_menu"
+        action="smart_template_maker_action_view" 
+        sequence="10"/>
+
+
+</odoo>
