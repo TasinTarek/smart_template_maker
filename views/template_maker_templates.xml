@@ -5,82 +5,28 @@
                 <!-- Include jsPDF library -->
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
                 <t t-call="website.layout">
-                    <div class="custom-container mt-5">
+                   <div class="custom-container mt-5">
                         <div class="row mb-5">
                             <div id="page-content" class="col-md-8">
+                                <div id="coordinates" class="coordinates-display"></div>                                <!-- Display coordinates -->
                                 <canvas id="canvas" style="border: 1px solid black;"></canvas>
                             </div>
                             <div class="col-md-4">
-                                <div class="card-body p-md-5 text-black">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-4">
-                                            <div class="form-group mb-3 ">
-                                                <label for="program_id">Select Partner</label>
-                                                <select class="form-control" id="info_id" name="program_id">
-                                                    <option value="">Choose Partner</option>
-                                                    <t t-foreach="partners" t-as="partners">
-                                                        <option t-att-value="partners.id" >
-                                                            <t t-esc="partners.name" />
-                                                        </option>
-                                                    </t>
-
-                                                </select>
-
-                                            </div>
-                                            <div class="form-outline">
-                                                <input type="text" id="firstName" class="form-control form-control-lg" />
-                                                <label class="form-label" for="name">First name</label>
-                                            </div>
+                                <div class="form-group">
+                                    <label for="coordinateX">X Coordinate:</label>
+                                    <input type="text" id="coordinateX" class="form-control"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="coordinateY">Y Coordinate:</label>
+                                        <input type="text" id="coordinateY" class="form-control"/>
                                         </div>
-                                        <div class="col-md-6 mb-4">
-                                            <div class="form-outline">
-                                                <input type="text" id="lastName" class="form-control form-control-lg" />
-                                                <label class="form-label" for="lastName">Last name</label>
-                                            </div>
-                                        </div>
+                                        <input type="file" id="image-input" accept="image/*" onchange="setBackgroundImage()"></input>
+                                        <button type="button" class="btn btn-primary btn-sm mt-2" onclick="updateCard()">Update Info</button>
+                                        <button id="download-pdf-btn" onclick="downloadPDF()">Download PDF</button>
                                     </div>
-
-                                    <div class="form-outline mb-4">
-                                        <input type="text" id="address" class="form-control form-control-lg" />
-                                        <label class="form-label" for="address">Address</label>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-4">
-                                            <select class="select" id="state">
-                                                <option value="1">State</option>
-                                                <option value="2">Option 1</option>
-                                                <option value="3">Option 2</option>
-                                                <option value="4">Option 3</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 mb-4">
-                                            <select class="select" id="city">
-                                                <option value="1">City</option>
-                                                <option value="2">Option 1</option>
-                                                <option value="3">Option 2</option>
-                                                <option value="4">Option 3</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-outline mb-4">
-                                        <input type="text" id="zip" class="form-control form-control-lg" />
-                                        <label class="form-label" for="zip">Zip</label>
-                                    </div>
-
-                                    <div class="form-outline mb-4">
-                                        <input type="text" id="email" class="form-control form-control-lg" />
-                                        <label class="form-label" for="email">Email</label>
-                                    </div>
-
-                                    <input type="file" id="image-input" accept="image/*" onchange="setBackgroundImage()"></input>
-                                    <button type="button" class="btn btn-primary btn-sm mt-2" onclick="updateCard()">Update Info</button>
-                                    <button id="download-pdf-btn" onclick="downloadPDF()">Download PDF</button>
-
                                 </div>
                             </div>
-                        </div>
-                    </div>
+
                 </t>
             </xpath>
         </template>
