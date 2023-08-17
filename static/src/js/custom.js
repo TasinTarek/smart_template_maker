@@ -505,3 +505,59 @@ canvas.addEventListener("mousemove", function (e) {
 canvas.addEventListener("mouseout", function () {
     document.getElementById("coordinates").innerText = "";
 });
+
+function getPartnerInfoAndUpdateCanvas(partnerId) {
+    // Use the Odoo JSON-RPC API to fetch partner info
+    $.ajax({
+        url: '/web/dataset/call_kw',
+        method: 'POST',
+        dataType: 'json',
+        contentType: "application/json",
+        data: JSON.stringify({
+            "jsonrpc": "2.0",
+            "method": "call",
+            "params": {
+                "model": "smart.template.maker",
+                "method": "get_partner_info",
+                "args": [partnerId],
+                "kwargs": {}
+            },
+            "id": new Date().getTime()
+        }),
+        success: function(data) {
+        console.log(data); 
+        console.log('Server Response:', data); // To inspect the data structure
+        if (data && data.result && typeof data.result.name === 'string') {
+            var xCoordinate = parseInt(document.getElementById("coordinateX").value) || 50;
+            var yCoordinate = parseInt(document.getElementById("coordinateY").value) || 250 * cards.length;
+
+            // Update or create a card with the fetched data
+            updateCardWithData(xCoordinate, yCoordinate, data.result.name);
+        } else {
+            console.error("Unexpected server response structure:", data);
+        }
+}
+
+    });
+}
+
+function updateCardWithData(x, y, text) {
+    // Check if text is not a string and convert it or provide a default value
+    if (typeof text !== 'string') {
+        text = String(text) || 'N/A';
+    }
+
+    // Create a new card object with the input data
+    var newCard = {
+        x: x,
+        y: y,
+        width: 200,
+        height: 150,
+        fill: "white",
+        text: text
+    };
+
+    cards.push(newCard);
+    drawCards();
+}
+

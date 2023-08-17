@@ -23,6 +23,7 @@
                                         <input type="file" id="image-input" accept="image/*" onchange="setBackgroundImage()"></input>
                                         <button type="button" class="btn btn-primary btn-sm mt-2" onclick="updateCard()">Update Info</button>
                                         <button id="download-pdf-btn" onclick="downloadPDF()">Download PDF</button>
+                                        <button type="button" class="btn btn-primary btn-sm mt-2" t-att-data-partner-id="partner_id" onclick="getPartnerInfoAndUpdateCanvas(this.getAttribute('data-partner-id'))">Update Info with Partner Data</button>
                                     </div>
                                 </div>
                             </div>
