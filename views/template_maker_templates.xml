@@ -12,22 +12,33 @@
                                 <canvas id="canvas" style="border: 1px solid black;"></canvas>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group">
+                                <!-- <div class="form-group">
                                     <label for="coordinateX">X Coordinate:</label>
                                     <input type="text" id="coordinateX" class="form-control"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="coordinateY">Y Coordinate:</label>
-                                        <input type="text" id="coordinateY" class="form-control"/>
-                                        </div>
-                                        <input type="file" id="image-input" accept="image/*" onchange="setBackgroundImage()"></input>
-                                        <button type="button" class="btn btn-primary btn-sm mt-2" onclick="updateCard()">Update Info</button>
-                                        <button id="download-pdf-btn" onclick="downloadPDF()">Download PDF</button>
-                                        <button type="button" class="btn btn-primary btn-sm mt-2" t-att-data-partner-id="partner_id" onclick="getPartnerInfoAndUpdateCanvas(this.getAttribute('data-partner-id'))">Update Info with Partner Data</button>
-                                    </div>
                                 </div>
-                            </div>
+                                <div class="form-group">
+                                    <label for="coordinateY">Y Coordinate:</label>
+                                    <input type="text" id="coordinateY" class="form-control"/>
+                                </div> -->
+                                <div class="form-group">
+                                    <label for="numberOfCards">Number of Cards:</label>
+                                    <select id="numberOfCards" onchange="createCoordinateFields(this.value)">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
 
+                                <div id="coordinateFieldsContainer"></div>
+                                <input type="file" id="image-input" accept="image/*" onchange="setBackgroundImage()"></input>
+                                <button type="button" class="btn btn-primary btn-sm mt-2" onclick="updateCard()">Update Info</button>
+                                <button onclick="downloadCanvasAsPDF()">Download as PDF</button>
+                                <button type="button" class="btn btn-primary btn-sm mt-2" onclick="sendCoordinatesToBackend()">Save Coordinates</button>
+                                <button type="button" class="btn btn-primary btn-sm mt-2" t-att-data-partner-id="partner_id" onclick="getPartnerInfoAndUpdateCanvas(this.getAttribute('data-partner-id'))">Update Info with Partner Data</button>
+                            </div>
+                        </div>
+                    </div>
                 </t>
             </xpath>
         </template>

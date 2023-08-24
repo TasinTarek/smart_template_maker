@@ -260,8 +260,6 @@
 
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
-
-// Set A4 size dimensions (in pixels)
 var a4Width = 794;
 var a4Height = 1123;
 
@@ -273,29 +271,20 @@ var backgroundImage = new Image();
 var dragging = false;
 var dragIndex;
 var offsetX, offsetY;
-
 var cards = [];
 
 function setBackgroundImage() {
     var imageInput = document.getElementById("image-input");
     var file = imageInput.files[0];
     var reader = new FileReader();
-
     reader.onload = function (e) {
         backgroundImage.onload = function () {
-            // Resize the image to fit the canvas
             var scale = Math.min(a4Width / backgroundImage.width, a4Height / backgroundImage.height);
             var scaledWidth = backgroundImage.width * scale;
             var scaledHeight = backgroundImage.height * scale;
-
-            // Calculate center position to draw the image
             var centerX = (canvas.width - scaledWidth) / 2;
             var centerY = (canvas.height - scaledHeight) / 2;
-
-            // Clear the canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw the resized image as the canvas background
             ctx.drawImage(backgroundImage, centerX, centerY, scaledWidth, scaledHeight);
 
             // Draw the cards on top of the image
@@ -340,55 +329,109 @@ function drawCard(x, y, width, height, fill, text) {
     ctx.font = "10px Arial";
     ctx.fillStyle = "black";
     ctx.textAlign = "left";
-    ctx.fillText("X: " + x + ", Y: " + y, x + 5, y + 15); // Adjust the position as needed
+    ctx.fillText("X: " + x + ", Y: " + y, x + 5, y + 15);
 }
 
 function drawCards() {
-    // Draw each card in the cards[] array
     for (var i = 0; i < cards.length; i++) {
         var card = cards[i];
         drawCard(card.x, card.y, card.width, card.height, card.fill, card.text);
     }
 }
+function createCoordinateFields(num) {
+    const container = document.getElementById("coordinateFieldsContainer");
+    container.innerHTML = ""; // Clear existing fields
 
-function updateCard() {
-    var xCoordinate = parseInt(document.getElementById("coordinateX").value) || 50;
-    var yCoordinate = parseInt(document.getElementById("coordinateY").value) || 250 * cards.length;
+    for (let i = 0; i < num; i++) {
+        let coordDiv = document.createElement("div");
 
-    if (dragging && dragIndex !== undefined) {
-        cards[dragIndex].x = xCoordinate;
-        cards[dragIndex].y = yCoordinate;
+        let labelX = document.createElement("label");
+        labelX.innerHTML = `X Coordinate for Card ${i + 1}:`;
+        let inputX = document.createElement("input");
+        inputX.type = "text";
+        inputX.id = `coordinateX${i + 1}`;
+        inputX.className = "form-control";
+
+        let labelY = document.createElement("label");
+        labelY.innerHTML = `Y Coordinate for Card ${i + 1}:`;
+        let inputY = document.createElement("input");
+        inputY.type = "text";
+        inputY.id = `coordinateY${i + 1}`;
+        inputY.className = "form-control";
+
+        coordDiv.appendChild(labelX);
+        coordDiv.appendChild(inputX);
+        coordDiv.appendChild(labelY);
+        coordDiv.appendChild(inputY);
+        
+        container.appendChild(coordDiv);
     }
-    // Create a new card object with the input data
-    var newCard = {
-        x: xCoordinate,
-        y: yCoordinate,
-        width: 200,
-        height: 150,
-        fill: "white",
-        text: "Sample Text" // You can replace this with the text you want to display
-    };
-
-    // Add the new card object to the cards array
-    cards.push(newCard);
-
-    // Redraw the canvas with updated cards
-    drawCards();
 }
 
+// Fetch Data from the server
+function updateCard() {
+    fetch('/get_partner_data', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "call",
+            params: {}
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.result);
+
+        let numCards = document.getElementById("numberOfCards").value;
+
+        // Check to ensure that there are not more cards selected than available data.
+        numCards = Math.min(numCards, data.result.length);
+
+        // Loop through the number of cards
+        for (let i = 0; i < numCards; i++) {
+            var xCoordinate = parseInt(document.getElementById(`coordinateX${i + 1}`).value) || 50;
+            var yCoordinate = parseInt(document.getElementById(`coordinateY${i + 1}`).value) || 250;
+
+            var partner = data.result[i];
+            var newCard = {
+                x: xCoordinate,
+                y: yCoordinate,
+                width: 200,
+                height: 150,
+                fill: "white",
+                text: 
+                "Name: " + partner.name + "\n" +
+                "Address: " + partner.address + "\n" +
+                "State: " + partner.state + "\n" +
+                "City: " + partner.city + "\n" +
+                "Zip: " + partner.zip + "\n" +
+                "Email: " + partner.email
+            };
+            cards.push(newCard);
+        }
+
+        drawCards();
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Redraw the scene to update the coordinates
 function handleMouseMove(e) {
     if (!dragging) {
         return;
     }
-
     var mx = e.clientX - offsetX;
     var my = e.clientY - offsetY;
-
     var card = cards[dragIndex];
+
     card.x = mx - card.width / 2;
     card.y = my - card.height / 2;
 
-    drawScene(); // Redraw the scene to update the coordinates
+    drawScene(); 
 }
 
 function handleMouseUp(e) {
@@ -411,10 +454,7 @@ window.addEventListener("resize", function () {
 
 // Call to draw the initial scene
 function drawScene() {
-    // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw the image as the canvas background (if available)
     if (backgroundImage.width !== 0 && backgroundImage.height !== 0) {
         var scale = Math.min(a4Width / backgroundImage.width, a4Height / backgroundImage.height);
         var scaledWidth = backgroundImage.width * scale;
@@ -423,8 +463,6 @@ function drawScene() {
         var centerY = (canvas.height - scaledHeight) / 2;
         ctx.drawImage(backgroundImage, centerX, centerY, scaledWidth, scaledHeight);
     }
-
-    // Draw the cards on top of the image
     drawCards();
 }
 
@@ -456,33 +494,6 @@ window.addEventListener("resize", function () {
     updateOffset();
     drawScene();
 });
-
-// ... (other code)
-
-
-function downloadPDF() {
-    // Create a new jsPDF instance
-    var pdf = new jsPDF("p", "px", "a4");
-
-    // Get the HTML content of the page
-    var htmlContent = document.getElementById("page-content");
-
-    // Options for jsPDF to set the page height and width
-    var options = {
-        html2canvas: { scale: 2 },
-        background: '#fff'
-    };
-
-    // Use html2canvas to convert the HTML content to canvas
-    html2canvas(htmlContent, options).then(function (canvas) {
-        // Add the canvas image to the PDF
-        pdf.addImage(canvas, "JPEG", 0, 0, canvas.width, canvas.height);
-
-        // Download the PDF
-        pdf.save("page.pdf");
-    });
-}
-
 function updateOffset() {
     var rect = canvas.getBoundingClientRect();
     offsetX = rect.left;
@@ -505,59 +516,47 @@ canvas.addEventListener("mousemove", function (e) {
 canvas.addEventListener("mouseout", function () {
     document.getElementById("coordinates").innerText = "";
 });
-
-function getPartnerInfoAndUpdateCanvas(partnerId) {
-    // Use the Odoo JSON-RPC API to fetch partner info
-    $.ajax({
-        url: '/web/dataset/call_kw',
-        method: 'POST',
-        dataType: 'json',
-        contentType: "application/json",
-        data: JSON.stringify({
-            "jsonrpc": "2.0",
-            "method": "call",
-            "params": {
-                "model": "smart.template.maker",
-                "method": "get_partner_info",
-                "args": [partnerId],
-                "kwargs": {}
-            },
-            "id": new Date().getTime()
-        }),
-        success: function(data) {
-        console.log(data); 
-        console.log('Server Response:', data); // To inspect the data structure
-        if (data && data.result && typeof data.result.name === 'string') {
-            var xCoordinate = parseInt(document.getElementById("coordinateX").value) || 50;
-            var yCoordinate = parseInt(document.getElementById("coordinateY").value) || 250 * cards.length;
-
-            // Update or create a card with the fetched data
-            updateCardWithData(xCoordinate, yCoordinate, data.result.name);
-        } else {
-            console.error("Unexpected server response structure:", data);
-        }
+// Save the PDF
+function downloadCanvasAsPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    var dataURL = canvas.toDataURL("image/png");
+    doc.addImage(dataURL, 'PNG', 10, 10, 180, 140);
+    doc.save('canvas-content.pdf');
 }
 
+function sendCoordinatesToBackend() {
+    // Create an array to store all card coordinates
+    var cardCoordinates = cards.map(function(card) {
+        return {
+            x: card.x,
+            y: card.y
+        };
     });
+
+    // Send the data to the backend
+    fetch('/save_card_coordinates', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "call",
+            params: {
+                card_coordinates: cardCoordinates
+            }
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        // You can check the server's response here or give feedback to the user.
+        if(data.result && data.result.success) {
+            alert("There was an error saving the coordinates.");
+        } else {
+            alert("Coordinates saved successfully!");
+        }
+    })
+    .catch(error => console.error('Error:', error));
 }
-
-function updateCardWithData(x, y, text) {
-    // Check if text is not a string and convert it or provide a default value
-    if (typeof text !== 'string') {
-        text = String(text) || 'N/A';
-    }
-
-    // Create a new card object with the input data
-    var newCard = {
-        x: x,
-        y: y,
-        width: 200,
-        height: 150,
-        fill: "white",
-        text: text
-    };
-
-    cards.push(newCard);
-    drawCards();
-}
-

@@ -9,7 +9,8 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name" />
-                    <field name="partner_id" />
+                    <field name="x_coordinate" />
+                    <field name="y_coordinate" />
                 </tree>
             </field>
         </record>
@@ -24,7 +25,8 @@
                     <sheet>
                         <group>
                             <field name="name" />
-                            <field name="partner_id" />
+                            <field name="x_coordinate" />
+                            <field name="y_coordinate" />
                         </group>
                     </sheet>
                 </form>
